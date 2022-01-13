@@ -38,7 +38,7 @@
   import BackTop from "components/content/backTop/BackTop";
 
   import {getHomeMultidata,getHomeGoods} from "network/home"
-  import {debounce} from "components/common/util";
+  import {itemListenerMixin,backTopMixin} from "common/mixin";
 
   export default {
 		name: "Home",
@@ -55,7 +55,8 @@
         isShowBackTop: false,
         tabOffsetTop: 0,
         isTabFixd: false,
-        saveY: 0
+        saveY: 0,
+        itemImageListener: null
       }
     },
     components: {
@@ -66,8 +67,7 @@
       TabControl,
       getHomeGoods,
       GoodsList,
-      Scroll,
-      BackTop
+      Scroll
     },
     created() {
       // 1.请求多个数据
@@ -78,13 +78,14 @@
       this.getHomeGoods('sell')
 
     },
+    mixins: [itemListenerMixin,backTopMixin],
     mounted() {
-      //3.监听item中图片加载完成
-      const refresh = debounce(this.$refs.scroll.refresh,100)
-      this.$bus.$on('itemImgLoad', () => {
-        refresh()
-      })
-
+		  //使用混入
+      // //3.监听item中图片加载完成
+      // const newRefresh = debounce(this.$refs.scroll.refresh,100)
+      // this.$bus.$on('itemImgLoad', () => {
+      //   newRefresh()
+      // })
     },
     //进入时跳转指定位置
     activated() {
@@ -93,7 +94,10 @@
     },
     //离开时记录位置
     deactivated() {
+		  //1.保存y值
       this.saveY = this.$refs.scroll.getScrollY()
+      //2.取消全局事件的监听
+      this.$bus.$off('itemImageLoad',this.itemImageListener)
     },
     methods: {
 		  /**
@@ -110,9 +114,6 @@
          }
          this.$refs.tabControl1.currentIndex = index
          this.$refs.tabControl2.currentIndex = index
-      },
-      tapClick(){
-        this.$refs.scroll.scrollTo(0,0)
       },
       contentScroll(position) {
          //判断BackTop是否显示

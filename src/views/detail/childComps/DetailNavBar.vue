@@ -31,7 +31,8 @@
     methods: {
 		  //标题的点击事件
       tittleClick(index) {
-        this.currentIndex = index
+        this.currentIndex = index;
+        this.$emit('titleClick',index)
       },
       //返回
       backClick() {

@@ -6,7 +6,7 @@ const Home = () => import('../views/home/Home')
 const Cart = () => import('../views/cart/Cart')
 const Profile = () => import('../views/profile/Profile')
 const Categety = () => import('../views/category/Categety')
-const Detail = () => import('../views/detail/detail')
+const Detail = () => import('../views/detail/Detail')
 
 
 //1.安装插件
